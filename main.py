@@ -3,7 +3,7 @@ import Map
 import beeState
 
 
-total_simulation_time = 3
+total_simulation_time = 6
 max_exploring_time = 5
 # site_options = SiteChoicesFile.site_choices
 bee_locations = []
@@ -33,7 +33,6 @@ def main():
         print(f"{NORMAL_COLOR}Next turn")
         bee_locations = []
         for bee in list_of_bees:
-            bee_locations.append(bee.bee_agent_info()[5])
             if bee.state == "Resting":
                 bee.resting()
             elif bee.state == "Exploring":
@@ -45,7 +44,12 @@ def main():
             else:
                 print("Error: state not found")
                 exit()
-        print(bee.state)
+            bee_locations.append(bee.bee_agent_info()[5])
+            # print(bee.location)
+        print(bee_locations)
+
+        Map.create_world(10, 10, bee_locations,
+                         site_choices.list_of_coordinates)
 
 
 main()

@@ -46,6 +46,7 @@ class BeeAgent(object):
     #             "Error"
 
     def resting(self):
+        print(f"{RESTING_COLOR}I am resting")
         if self.convinced_by_dance():
             self.state = "Verifying"
             print(
@@ -60,7 +61,7 @@ class BeeAgent(object):
             print(f"{RESTING_COLOR}I am still resting")
 
     def exploring(self):
-        print(self.location[0])
+        print(f"{EXPLORING_COLOR}I am still exploring because I have {self.exploring_time_left} units of time left")
         self.location = self.Exploring_tiles(
             self.location[0], self.location[1])
         self.location_site_checker()
@@ -79,16 +80,13 @@ class BeeAgent(object):
         else:
             self.exploring_time_left -= 1
             self.state = "Exploring"
-            print(
-                f"{EXPLORING_COLOR}I am still exploring because I have {self.exploring_time_left} units of time left")
 
     def dancing(self):
+        print(
+            f"{DANCING_COLOR}I'm dancing. My dance still has {self.total_dance_time} time left")
         if self.total_dance_time == 0:
             self.state = "Resting"
-            print(f"{RESTING_COLOR}I'm done dancing, I'm going to rest now")
         else:
-            print(
-                f"{DANCING_COLOR}I'm dancing. My dance still has {self.total_dance_time} time left")
             self.total_dance_time -= 1
 
     def Verifying(self):

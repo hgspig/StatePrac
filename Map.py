@@ -29,10 +29,10 @@ def create_world(x_dimension, y_dimension, bee_location_list=[], site_options_co
     y_stager = False
     for y in range(y_dimension//2, -(y_dimension//2), -1):
         for x in range(-x_dimension//2, (x_dimension//2)):
-            if [x, y] in site_options_coordinates:
+            if [x, y] in bee_location_list:
+                print(f"{DANCING_COLOR}{x},{y}", end=row_gap)
+            elif [x, y] in site_options_coordinates:
                 print(f"{SITE_COLOR}S", end=row_gap)
-            elif [x, y] == bee_location_list:
-                print(f"{DANCING_COLOR}B", end=row_gap)
             elif [x, y] == [0, 0]:
                 print(f"{NEST_COLOR}C", end=row_gap)
             elif [x, y] == [-5, 5]:
