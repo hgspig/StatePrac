@@ -1,4 +1,9 @@
 import random
+import beeInfo
+import math
+from matplotlib import pyplot as plt
+import matplotlib
+import math
 
 # COLORS
 SITE_COLOR = '\033[96m'
@@ -13,7 +18,7 @@ danced_for_location = [1, 3]
 
 
 class BeeAgent(object):
-    def __init__(self, total_simulation_time=20, max_exploring_time=5, site_options=[[1, 3]]):
+    def __init__(self, total_simulation_time=20, max_exploring_time=5, site_options=[[1, 3]], current_angle=random.randrange(0, 360, 1)):
         self.state = "Resting"
         self.total_dance_time = 0
         self.dance_time_left = 0
@@ -23,42 +28,29 @@ class BeeAgent(object):
         self.max_exploring_time = max_exploring_time
         self.total_simulation_time = total_simulation_time
         self.site_options = site_options
+        self.move_radius = 1
+        self.optimal_x = math.sqrt((self.move_radius**2)/2)
+        self.optimal_y = math.sqrt((self.move_radius**2)/2)
+        self.current_angle = 0
+        self.time_left_verifying = 0
 
     def bee_agent_info(self):
         return [self.state, self.total_dance_time, self.dance_time_left, self.exploring_time_left, self.site_found, self.location, self.max_exploring_time, self.total_simulation_time, self.site_options]
 
-    # def state_function(self):
-    #     for i in range(0, self.total_simulation_time):
-    #         print(f"{self.total_simulation_time-i}")
-    #         print(f"Current location: {self.location}")
-    #         bee_location = [[self.location]]
-    #         state = self.state
-    #         if state == "Resting":
-    #             self.resting()
-    #         elif state == "Exploring":
-    #             self.exploring()
-    #         elif state == "Dancing":
-    #             self.dancing()
-    #         elif state == "Verifying":
-    #             self.Verifying()
-    #         else:
-    #             print("Error: state not found")
-    #             "Error"
-
     def resting(self):
         print(f"{RESTING_COLOR}I am resting")
         if self.convinced_by_dance():
-            self.state = "Verifying"
+            self.state = "Going_To_Verify"
             print(
-                f"{VERIFYING_COLOR}I am convinced by the dance. I'm verifying their information")
+                f"{VERIFYING_COLOR}    I am convinced by the dance. I'm verifying their information")
             self.exploring_time_left = self.max_exploring_time
         elif self.decides_to_explore():  # (there is a 20% chance of going out exploring)
             self.state = "Exploring"
             self.exploring_time_left = self.max_exploring_time
-            print(f"{EXPLORING_COLOR}I have decided to explore")
+            print(f"{EXPLORING_COLOR}    I have decided to explore")
         else:
             self.state = "Resting"
-            print(f"{RESTING_COLOR}I am still resting")
+            print(f"{RESTING_COLOR}    I am still resting")
 
     def exploring(self):
         print(f"{EXPLORING_COLOR}I am still exploring because I have {self.exploring_time_left} units of time left")
@@ -74,7 +66,7 @@ class BeeAgent(object):
         elif self.exploring_time_left-1 == 0:
             self.exploring_time_left = 0
             self.location = [0, 0]
-            self.state = "Resting"
+            self.state = "Returning_From_Exploring"
             print(
                 f"{RESTING_COLOR}I didn't find anything but I'm tired so I'm done exploring")
         else:
@@ -90,22 +82,61 @@ class BeeAgent(object):
             self.total_dance_time -= 1
 
     def Verifying(self):
+        if self.time_left_verifying == 0:
+            self.state = "Returning_From_Verifying"
+        else:
+            self.time_left_verifying -= 1
+            self.state = "Verifying"
+            print(
+                f"I am still verifying the site because I have {self.time_left_verifying} units of time left")
+
+    def Returning_From_Exploring(self):
+        print("I'm returning from exploring")
+        self.state = "Resting"
+
+    def Returning_From_Verifying(self):
+        print("I'm returning from verifying")
+        if abs(self.location[0]) > self.optimal_x and abs(self.location[1]) > self.optimal_y:
+            self.location = [self.location[0]-self.optimal_x,
+                             self.location[1]-self.optimal_y]
+            print(
+                f"I am moving to the optimal location of {self.optimal_x}, {self.optimal_y}")
+        self.state = "Dancing"
+
+    def Going_To_Verify(self):
+        print("I'm going to verify")
+        self.state = "Verifying"
         self.location_site_checker()
         self.location = self.Verifying_Path(
             self.location[0], self.location[1], danced_for_location)
         if self.site_found:
-            print(f"{DANCING_COLOR}I found a site, I'm going to dance")
-            self.location = [0, 0]
+            print(f"{VERIFYING_COLOR}I found a site, I'm going to verify it")
             self.start_dance(3)
-            self.state = "Dancing"
+            self.state = "Returning_From_Verifying"
         else:
             self.state = "Verifying"
+            self.time_left_verifying = 3
             print(
                 f"I am still going out to verify because I haven't reached the site yet")
 
         #####################
         # Helper Functions ##
         #####################
+
+    def plot_location(self, list_of_xy):
+        plt.rcParams["figure.figsize"] = [7.00, 7.0]
+        plt.rcParams["figure.autolayout"] = True
+        plt.xlim(-10, 10)
+        plt.ylim(-10, 10)
+        plt.grid()
+        point_num = 1
+        for i in list_of_xy:
+            x = [i[0]]
+            y = [i[1]]
+            plt.plot(x, y, marker="o", markersize=point_num,
+                     markeredgecolor="blue", markerfacecolor="white")
+            point_num += 1
+        plt.show()
 
     def location_site_checker(self):
         if self.location in self.site_options:
@@ -115,6 +146,54 @@ class BeeAgent(object):
             self.site_found = False
         return self.location
 
+    def moving_to_a_specific_location(self, curr_x, curr_y, goal_site_coordinates):
+        if curr_x == goal_site_coordinates[0] and curr_y == goal_site_coordinates[1]:
+            return self.location
+        # one of the directions is close to the goal
+        elif abs(curr_x - goal_site_coordinates[0]) < self.optimal_x and abs(curr_y - goal_site_coordinates[1]) < self.optimal_y:
+            self.location = goal_site_coordinates
+        # cases above this one WORK!
+        elif abs(curr_x - goal_site_coordinates[0]) < self.optimal_x and curr_y > goal_site_coordinates[1]:
+            x_distance_still_needed = abs(curr_x - goal_site_coordinates[0])
+            y_distance = math.sqrt(
+                (self.move_radius**2) - (x_distance_still_needed**2))
+            self.location = [abs(curr_x)+x_distance_still_needed,
+                             curr_y - y_distance]
+        elif abs(curr_x - goal_site_coordinates[0]) < self.optimal_x and curr_y < goal_site_coordinates[1]:
+            x_distance_still_needed = goal_site_coordinates[0]-curr_x
+            y_distance = math.sqrt(
+                (self.move_radius**2) - (x_distance_still_needed**2))
+            self.location = [round(curr_x+x_distance_still_needed),
+                             curr_y + y_distance]
+        elif abs(curr_y - goal_site_coordinates[1]) < self.optimal_y and curr_x > goal_site_coordinates[0]:
+            y_distance_still_needed = abs(curr_y - goal_site_coordinates[1])
+            x_distance = math.sqrt(
+                (self.move_radius**2) - (y_distance_still_needed**2))
+            self.location = [curr_x - x_distance,
+                             abs(curr_y)-y_distance_still_needed]
+        elif abs(curr_y - goal_site_coordinates[1]) < self.optimal_y and curr_x < goal_site_coordinates[0]:
+            y_distance_still_needed = abs(curr_y - goal_site_coordinates[1])
+            x_distance = math.sqrt(
+                (self.move_radius**2) - (y_distance_still_needed**2))
+            self.location = [curr_x + x_distance,
+                             abs(curr_y) - y_distance_still_needed]
+        # neither location is close to the goal
+        elif curr_x < goal_site_coordinates[0] and curr_y < goal_site_coordinates[1]:
+            self.location = [round(curr_x + self.optimal_x, 3),
+                             round(curr_y + self.optimal_y, 3)]
+        elif curr_x > goal_site_coordinates[0] and curr_y < goal_site_coordinates[1]:
+            self.location = [round(curr_x - self.optimal_x, 3),
+                             round(curr_y + self.optimal_y, 3)]
+        elif curr_x < goal_site_coordinates[0] and curr_y > goal_site_coordinates[1]:
+            self.location = [round(curr_x + self.optimal_x, 3),
+                             round(curr_y - self.optimal_y, 3)]
+        elif curr_x > goal_site_coordinates[0] and curr_y > goal_site_coordinates[1]:
+            self.location = [round(curr_x - self.optimal_x, 3),
+                             round(curr_y - self.optimal_y, 3)]
+        else:
+            print("Error calculating the move to a specific location")
+        return self.location
+
     def Exploring_tiles(self, curr_x, curr_y):
         X_change = random.choice([-1, 0, 1])
         Y_change = random.choice([-1, 0, 1])
@@ -122,6 +201,18 @@ class BeeAgent(object):
             return self.Exploring_tiles(curr_x, curr_y)
         else:
             return [curr_x + X_change, curr_y + Y_change]
+
+    def move(self, curr_x, curr_y):
+        """returns a set of new coordinates that are a random angle of 30 degrees away from the current angle and in the radius length"""
+        angle_change = (random.randrange(self.current_angle -
+                        20, self.current_angle+20, 1)) % 360
+        X_change = self.move_radius * math.cos(math.radians(angle_change))
+        Y_change = self.move_radius * math.sin(math.radians(angle_change))
+        if X_change == 0 and Y_change == 0:
+            return self.move(curr_x, curr_y)
+        else:
+            self.current_angle = angle_change
+            return [round(curr_x + X_change, 3), round(curr_y + Y_change, 3)]
 
     def Verifying_Path(self, curr_x, curr_y, goal_site_coordinates):
         if curr_x < goal_site_coordinates[0]:
@@ -182,12 +273,34 @@ class Site(object):
         self.Y_distance_from_center = Y_distance_from_center
 
 
-# BeeAgent().state_function()
+# bee = BeeAgent()
+# print(bee.bee_agent_info())
+# bee_location_list = []
+# for i in range(0, 10):
+#     bee.location = bee.move(bee.location[0], bee.location[1])
+#     print(bee.location)
+#     print(bee.current_angle)
+#     bee_location_list.append(bee.location)
+# bee.plot_location(bee_location_list)
 
-# __    __    __
-# /  \__/  \__/  \
-# \__/  \__/  \__/
-# /  \__/  \__/  \
-# \__/  \__/  \__/
-# /  \__/  \__/  \
-# \__/  \__/  \__/
+# BeeAgent().state_function()
+bee = BeeAgent()
+print(bee.location)
+while bee.location != [3, 7]:
+    print(bee.moving_to_a_specific_location(
+        bee.location[0], bee.location[1], [3, 7]))
+bee.location = [0, 0]
+print("new point test")
+while bee.location != [-2, 5]:
+    print(bee.moving_to_a_specific_location(
+        bee.location[0], bee.location[1], [-2, 5]))
+bee.location = [0, 0]
+print("new point test")
+while bee.location != [-3, -1]:
+    print(bee.moving_to_a_specific_location(
+        bee.location[0], bee.location[1], [-3, -1]))
+bee.location = [0, 0]
+print("new point test")
+while bee.location != [4, -1]:
+    print(bee.moving_to_a_specific_location(
+        bee.location[0], bee.location[1], [4, -1]))
