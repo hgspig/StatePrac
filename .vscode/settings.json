@@ -1,0 +1,9 @@
+{
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter"
+  },
+  "settings": {
+  "python.formatting.provider": "none",
+  "editor.wordWrap": "off",
+  }
+}
