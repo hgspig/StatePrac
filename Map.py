@@ -24,27 +24,28 @@ class initialTerrain(object):
 
 
 def create_world(x_dimension, y_dimension, bee_location_list=[], site_options_coordinates=[]):
-    row_gap = "   "
+    front_gap = " "
+    back_gap = "  "
     # hex_list = initialTerrain(x_dimension, y_dimension).get_hex_list()
     y_stager = False
     for y in range(y_dimension//2, -(y_dimension//2), -1):
         for x in range(-x_dimension//2, (x_dimension//2)):
             if [x, y] in bee_location_list:
-                print(f"{DANCING_COLOR}{x},{y}", end=row_gap)
+                print(f"{DANCING_COLOR}{x},{y} ", end="")
             elif [x, y] in site_options_coordinates:
-                print(f"{SITE_COLOR}S", end=row_gap)
+                print(front_gap+f"{SITE_COLOR}S"+back_gap, end="")
             elif [x, y] == [0, 0]:
-                print(f"{NEST_COLOR}C", end=row_gap)
+                print(front_gap+f"{NEST_COLOR}C"+back_gap, end="")
             elif [x, y] == [-5, 5]:
-                print(f"{NEST_COLOR}E", end=row_gap)
+                print(front_gap+f"{NEST_COLOR}E"+back_gap, end="")
             elif [x, y] == [4, -4]:
-                print(f"{NEST_COLOR}E", end=row_gap)
+                print(front_gap+f"{NEST_COLOR}E"+back_gap, end="")
             else:
-                print(f"{NORMAL_COLOR}:", end=row_gap)
+                print(front_gap+f"{NORMAL_COLOR}:"+back_gap, end="")
         print()
         print()
-        if y_stager == False:
-            print("  ", end="")
-            y_stager = True
-        else:
-            y_stager = False
+        # if y_stager == False:
+        #     print("  ", end="")
+        #     y_stager = True
+        # else:
+        #     y_stager = False

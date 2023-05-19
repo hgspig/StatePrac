@@ -3,11 +3,11 @@ import Map
 import beeState
 
 
-total_simulation_time = 6
+total_simulation_time = 9
 max_exploring_time = 5
 # site_options = SiteChoicesFile.site_choices
 bee_locations = []
-num_bee_agents = 5
+num_bee_agents = 1
 list_of_bees = []  # this is of type pointers to the bee object instances
 
 # COLORS
@@ -41,15 +41,21 @@ def main():
                 bee.dancing()
             elif bee.state == "Verifying":
                 bee.Verifying()
+            elif bee.state == "Returning_From_Exploring":
+                bee.Returning_From_Exploring()
+            elif bee.state == "Returning_From_Verifying":
+                bee.Returning_From_Verifying()
+            elif bee.state == "Going_To_Verify":
+                bee.Going_To_Verify()
             else:
                 print("Error: state not found")
                 exit()
             bee_locations.append(bee.bee_agent_info()[5])
-            # print(bee.location)
+            print(bee.location)
         print(bee_locations)
 
         Map.create_world(10, 10, bee_locations,
-                         site_choices.list_of_coordinates)
+         site_choices.list_of_coordinates)
 
 
 main()
