@@ -146,20 +146,6 @@ class BeeAgent(object):
         # Helper Functions ##
         #####################
 
-    def plot_location(self, list_of_xy):
-        plt.rcParams["figure.figsize"] = [7.00, 7.0]
-        plt.rcParams["figure.autolayout"] = True
-        plt.xlim(-10, 10)
-        plt.ylim(-10, 10)
-        plt.grid()
-        point_num = 1
-        for i in list_of_xy:
-            x = [i[0]]
-            y = [i[1]]
-            plt.plot(x,y,marker="o",markersize=point_num,markeredgecolor="blue",markerfacecolor="white",)
-            point_num += 1
-        plt.show()
-
     def location_site_checker(self):
         if self.location in self.site_options:
             self.site_found = True
@@ -176,7 +162,7 @@ class BeeAgent(object):
         if abs(x_distance) > abs(x_needed) and abs(y_distance) > abs(y_needed):
             x_distance = x_needed
             y_distance = y_needed
-        self.location = [curr_x + x_distance, curr_y + y_distance]
+        self.location = [round(curr_x + x_distance, 3), round(curr_y + y_distance, 3)]
 
     def Exploring_tiles(self, curr_x, curr_y):
         X_change = random.choice([-1, 0, 1])

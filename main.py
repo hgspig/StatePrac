@@ -51,6 +51,7 @@ def main():
                 print("Error: state not found")
                 exit()
             bee_locations.append(bee.bee_agent_info()[5])
+            print(bee.bee_agent_info()[5])
             print(bee.location)
         print(bee_locations)
 

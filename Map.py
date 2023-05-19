@@ -1,4 +1,8 @@
 import SiteChoicesFile
+import math
+from matplotlib import pyplot as plt
+import matplotlib
+import math
 
 # COLORS
 SITE_COLOR = '\033[96m'
@@ -9,43 +13,32 @@ EXPLORING_COLOR = '\033[92m'
 VERIFYING_COLOR = '\033[93m'
 DANCING_COLOR = '\033[91m'
 
-
-class initialTerrain(object):
-    def __init__(self, x_max, y_max):
-        self.x_max = x_max
-        self.y_max = y_max
-        self.hexes = []
-        for x in range(x_max, -x_max, -1):
-            for y in range(-y_max, y_max):
-                self.hexes.append(hex(x, y))
-
-    def get_hex_list(self):
-        return self.hexes
+def plot_location(x_dimension, y_dimension,list_of_xy):
+    plt.rcParams["figure.figsize"] = [x_dimension, y_dimension]
+    plt.rcParams["figure.autolayout"] = True
+    plt.xlim(-(x_dimension//2), (x_dimension//2))
+    plt.ylim(-(y_dimension//2), (y_dimension//2))
+    plt.grid()
+    point_num = 7
+    plt.plot(0,0,marker=f"D",markersize=point_num,markeredgecolor="purple",markerfacecolor="purple",)
+    for i in list_of_xy:
+        x = [i[0]]
+        y = [i[1]]
+        if i[2] == "B":
+            plt.plot(x,y,marker=f"${i[2]}$",markersize=point_num,markeredgecolor="red",markerfacecolor="white",)
+        elif i[2] == "S":
+            plt.plot(x,y,marker=f"${i[2]}$",markersize=point_num,markeredgecolor="green",markerfacecolor="white",)
+        point_num += 0
+    plt.show()
 
 
 def create_world(x_dimension, y_dimension, bee_location_list=[], site_options_coordinates=[]):
-    front_gap = " "
-    back_gap = "  "
-    # hex_list = initialTerrain(x_dimension, y_dimension).get_hex_list()
-    y_stager = False
-    for y in range(y_dimension//2, -(y_dimension//2), -1):
-        for x in range(-x_dimension//2, (x_dimension//2)):
-            if [x, y] in bee_location_list:
-                print(f"{DANCING_COLOR}{x},{y} ", end="")
-            elif [x, y] in site_options_coordinates:
-                print(front_gap+f"{SITE_COLOR}S"+back_gap, end="")
-            elif [x, y] == [0, 0]:
-                print(front_gap+f"{NEST_COLOR}C"+back_gap, end="")
-            elif [x, y] == [-5, 5]:
-                print(front_gap+f"{NEST_COLOR}E"+back_gap, end="")
-            elif [x, y] == [4, -4]:
-                print(front_gap+f"{NEST_COLOR}E"+back_gap, end="")
-            else:
-                print(front_gap+f"{NORMAL_COLOR}:"+back_gap, end="")
-        print()
-        print()
-        # if y_stager == False:
-        #     print("  ", end="")
-        #     y_stager = True
-        # else:
-        #     y_stager = False
+    copy_of_bee_location_list = bee_location_list.copy()
+    copy_of_site_options_coordinates = site_options_coordinates.copy()
+    for bee in copy_of_bee_location_list:
+        bee.insert(2, "B")
+    for site in copy_of_site_options_coordinates:
+        site.insert(2, "S")
+    noteworthy_locations = copy_of_bee_location_list + copy_of_site_options_coordinates
+    plot_location(x_dimension, y_dimension, noteworthy_locations)
+
