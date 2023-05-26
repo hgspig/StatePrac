@@ -1,6 +1,7 @@
 import SiteChoicesFile
 import math
 from matplotlib import pyplot as plt
+from matplotlib import lines
 import matplotlib
 import math
 
@@ -26,6 +27,7 @@ def plot_location(x_dimension, y_dimension,list_of_xy):
         y = [i[1]]
         if i[2] == "B":
             plt.plot(x,y,marker=f"${i[2]}$",markersize=point_num,markeredgecolor="red",markerfacecolor="white",)
+            # lines.Line2D([0,i[0],10],[0,i[1],10],color="red",linestyle="dashed",linewidth=2)
         elif i[2] == "S":
             plt.plot(x,y,marker=f"${i[2]}$",markersize=point_num,markeredgecolor="green",markerfacecolor="white",)
         point_num += 0

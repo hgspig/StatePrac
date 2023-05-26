@@ -1,2 +1,4 @@
-# class worldinfo(object):
-#     __init__
+class worldinfo(object):
+    def __init__(self):
+        self.sites = []
+        
