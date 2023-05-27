@@ -13,19 +13,25 @@ def add_location(location, worth):
 #         print("Error: location not in locations_being_verified dictionary")
 
 def add_bee_dancing_for_location(location, bee):
-    if location in locations_being_danced_for:
-        locations_being_danced_for[location].append(bee) 
+    location_tuple = tuple(location)
+    if location_tuple in locations_being_danced_for:
+        locations_being_danced_for[location_tuple].append(bee) 
     else:
-        print("Error: location not in locations_being_danced_for dictionary")
+        #instead I should add a new location
+        locations_being_danced_for
+        print("Error: location not in locations_being_danced_for dictionary (adding function)")
 
 def remove_bee_dancing_for_location(location, bee):
-    if location in locations_being_danced_for:
-        if bee in locations_being_danced_for[location]:
-            locations_being_danced_for[location].remove(bee) 
+    location_tuple = tuple(location)
+    if location_tuple in locations_being_danced_for:
+        if bee in locations_being_danced_for[location_tuple]:
+            locations_being_danced_for[location_tuple].remove(bee) 
         else:
-            print("Error: bee not in locations_being_danced_for dictionary")
+            print(bee)
+            print(locations_being_danced_for[location_tuple])
+            print("Error: bee not in locations_being_danced_for dictionary (removing function)")
     else:
-        print("Error: location not in locations_being_danced_for dictionary")
+        print("Error: location not in locations_being_danced_for dictionary (removing function)")
 
 def quorum_verification(quorum_reached, quorum_amount):
     for location in locations_being_danced_for:

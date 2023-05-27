@@ -74,13 +74,13 @@ class BeeAgent(object):
 
 
     def dancing(self):
-        print(f"{DANCING_COLOR}I'm dancing. My dance still has {self.total_dance_time} time left")
-        if self.total_dance_time == 0:
-            location.remove_bee_dancing_for_location(self.location, self)
+        print(f"{DANCING_COLOR}I'm dancing. My dance still has {self.dance_time_left} time left")
+        if self.dance_time_left == 0:
+            location.remove_bee_dancing_for_location(self.location_verifying, self)
             self.state = "Resting"
             print(tab_text_formatting+f"{RESTING_COLOR}I'm done dancing so now I'm resting")
         else:
-            self.total_dance_time -= 1
+            self.dance_time_left -= 1
             print(tab_text_formatting+f"{DANCING_COLOR}I'm still dancing")
 
     def Verifying(self):
@@ -89,7 +89,9 @@ class BeeAgent(object):
             self.state = "Returning_From_Verifying"
             print(tab_text_formatting+f"I'm have finished verifying so now I'm returning from verifying")
             self.info_about_site = location.locations_worth[tuple(self.location_verifying)]
-            print(self.info_about_site)
+            self.dance_time_left = (self.info_about_site*10)//2
+            self.total_dance_time = (self.info_about_site*10)//2
+            # print("info about site: " + str(self.info_about_site))
         else:
             self.time_left_verifying -= 1
             self.state = "Verifying"
@@ -111,9 +113,9 @@ class BeeAgent(object):
             print(tab_text_formatting+"I'm still returning from Verifying.")
         else:
             print(tab_text_formatting+"I've arrived at the nest. I'm going to dance now.")
-            self.dance_time_left = 3
             self.state = "Dancing"
-            location.add_bee_dancing_for_location(self.location, self)
+            location.add_bee_dancing_for_location(self.location_verifying, self)
+            print(location.locations_being_danced_for)
 
 # hasn't been checked off yet
     def Going_To_Verify(self):
@@ -137,6 +139,7 @@ class BeeAgent(object):
             if abs(self.location[0]-site[0]) < self.move_radius:
                 if abs(self.location[1]-site[1]) < self.move_radius:
                     self.site_found = True
+                    self.location = site[0:2]
                     return site
         # self.site_found = False
         return self.location
@@ -160,14 +163,12 @@ class BeeAgent(object):
         Y_change = self.move_radius * math.sin(math.radians(angle_change))
         self.current_angle = angle_change
         return [round(curr_x + X_change, 3), round(curr_y + Y_change, 3)]
-# hasn't been checked off yet
 
     def convinced_by_dance(self):
         if self.probability_convinced_by_dance() > 0.6:
             return True
         else:
             return False
-# hasn't been checked off yet
 
     def decides_to_explore(self):
         if self.probability_resting_to_Exploring() > 0.4:
@@ -177,6 +178,8 @@ class BeeAgent(object):
 # hasn't been checked off yet
 
     def probability_convinced_by_dance(self):
+        self.location_verifying = [-2,3]
+        # self.location_verifying = random.choice(location.locations_being_danced_for.keys())
         return random.randrange(1, 11, 1) / 10
 # hasn't been checked off yet
 
@@ -187,26 +190,6 @@ class BeeAgent(object):
     def start_dance(self, site_goodness):
         self.dance_time_left = site_goodness
         self.total_dance_time = site_goodness
-
-# hasn't been checked off yet
-
-class hex(object):
-    def __init__(self, X_distance_from_center, Y_distance_from_center):
-        self.X_distance_from_center = X_distance_from_center
-        self.Y_distance_from_center = Y_distance_from_center
-        self.contians_potential_site = False
-
-    def make_site(self, site_goodness, prob_of_finding):
-        return Site(site_goodness,prob_of_finding,self.X_distance_from_center,self.Y_distance_from_center)
-
-# hasn't been checked off yet
-
-class Site(object):
-    def __init__( self, site_goodness,prob_of_finding, X_distance_from_center, Y_distance_from_center):
-        self.site_goodness = site_goodness
-        self.prob_of_finding = prob_of_finding
-        self.X_distance_from_center = X_distance_from_center
-        self.Y_distance_from_center = Y_distance_from_center
 
 
 # bee = BeeAgent()

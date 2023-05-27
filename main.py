@@ -4,11 +4,11 @@ import beeState
 import location
 
 
-total_simulation_time = 9
+total_simulation_time = 25
 max_exploring_time = 5
 # site_options = SiteChoicesFile.site_choices
 bee_locations = []
-num_bee_agents = 1
+num_bee_agents = 20
 list_of_bees = []  # this is of type pointers to the bee object instances
 quorum_reached = False
 
@@ -38,7 +38,7 @@ def main():
     for time_iterator in range(0, total_simulation_time):
         print(f"{NORMAL_COLOR}Next turn")
         bee_locations = []
-        bee_printing_locations = []
+        # bee_printing_locations = []
         for bee in list_of_bees:
             if bee.state == "Resting":
                 bee.resting()
@@ -57,19 +57,26 @@ def main():
             else:
                 print("Error: state not found")
                 exit()
-            bee_locations.append(bee.bee_agent_info()[5])
-            bee_printing_locations.append((bee.bee_agent_info()[5]).append("bee.state"))
-            print(bee_printing_locations)
+            bee_locations.append(bee.location[:])
+            # bee_printing_locations.append((bee.location[:]).append(bee.state))
+            # print(bee_printing_locations)
             # print(bee.bee_agent_info()[5])
             # print(bee.location)
+        for loc in location.locations_being_danced_for:
+            if len(location.locations_being_danced_for[loc]) > 10:
+                print(f"there are ten bees dancing for {loc}")
+                exit()
         print(bee_locations)
+        print()
+        print()
+        print()
 
         # Map.create_world(10, 10, bee_locations, site_choices.list_of_coordinates)
 
 
 main()
 
-#for bee.location 
-#if map(bee.location) !contains bee then add bee to the location
-#for  location in locations_being_verified
-#if len > quorm amount then location has been reached and all bee locations switch to there and simulation over. 
+## check for quorm every round
+## send bees out to verify based on dancing instead of randomness
+## have the positive feedback loop for the bees that really like their site
+## set up the map drawing stuff
