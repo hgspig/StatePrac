@@ -14,10 +14,10 @@ RESTING_COLOR = "\033[94m"
 EXPLORING_COLOR = "\033[92m"
 VERIFYING_COLOR = "\033[93m"
 DANCING_COLOR = "\033[91m"
-
 danced_for_location = [1, 3]
 tab_text_formatting = "     "
 verifying_time = 3
+bee_interdependence = .5
 
 
 class BeeAgent(object):
@@ -33,10 +33,11 @@ class BeeAgent(object):
         self.total_simulation_time = total_simulation_time
         self.site_options = site_options
         self.move_radius = 1
-        self.current_angle = 0
+        self.current_angle = current_angle
         self.time_left_verifying = 0
         self.trajectory_angle_radians = 0
         self.info_about_site = []
+        self.revisit_loop = 0
 
     def bee_agent_info(self):
         return [self.state, self.total_dance_time, self.dance_time_left, self.exploring_time_left, self.site_found, self.location, self.max_exploring_time, self.total_simulation_time, self.site_options]
@@ -75,10 +76,14 @@ class BeeAgent(object):
 
     def dancing(self):
         print(f"{DANCING_COLOR}I'm dancing. My dance still has {self.dance_time_left} time left")
-        if self.dance_time_left == 0:
+        if self.dance_time_left == 0 & self.revisit_loop == 0:
             location.remove_bee_dancing_for_location(self.location_verifying, self)
             self.state = "Resting"
             print(tab_text_formatting+f"{RESTING_COLOR}I'm done dancing so now I'm resting")
+        elif self.dance_time_left == 0:
+            self.revisit_loop -= 1
+            self.state = "Going_To_Verify"
+            self.location_verifying = self.location_verifying
         else:
             self.dance_time_left -= 1
             print(tab_text_formatting+f"{DANCING_COLOR}I'm still dancing")
@@ -91,6 +96,11 @@ class BeeAgent(object):
             self.info_about_site = location.locations_worth[tuple(self.location_verifying)]
             self.dance_time_left = (self.info_about_site*10)//2
             self.total_dance_time = (self.info_about_site*10)//2
+            if self.revisit_loop > 0: #can't equal zero because then it will loop forever (it subracts after checking if it's zero) 
+                if self.info_about_site >= .6:
+                    self.revisit_loop = (self.info_about_site*10)-5
+            if self.revisit_loop != 0:
+                self.revisit_loop -= 1
             # print("info about site: " + str(self.info_about_site))
         else:
             self.time_left_verifying -= 1
@@ -202,7 +212,6 @@ class BeeAgent(object):
 #     bee_location_list.append(bee.location)
 # bee.plot_location(bee_location_list)
 
-# BeeAgent().state_function()
 # bee = BeeAgent()
 # # print(bee.location)
 # # while bee.location != [-3, 7]:
@@ -212,3 +221,6 @@ class BeeAgent(object):
 # bee.state = "Exploring"
 # while bee.state == "Exploring":
 #     bee.exploring()
+# bee.state = "Going_To_Verify"
+# while bee.state != "Resting":
+#     bee.Going_To_Verify()

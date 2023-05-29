@@ -4,13 +4,14 @@ import beeState
 import location
 
 
-total_simulation_time = 25
+total_simulation_time = 60
 max_exploring_time = 5
 # site_options = SiteChoicesFile.site_choices
 bee_locations = []
-num_bee_agents = 20
+num_bee_agents = 1
 list_of_bees = []  # this is of type pointers to the bee object instances
 quorum_reached = False
+
 
 # COLORS
 SITE_COLOR = '\033[96m'
@@ -38,6 +39,7 @@ def main():
     for time_iterator in range(0, total_simulation_time):
         print(f"{NORMAL_COLOR}Next turn")
         bee_locations = []
+        num_bees_dancing = 0
         # bee_printing_locations = []
         for bee in list_of_bees:
             if bee.state == "Resting":
@@ -46,12 +48,16 @@ def main():
                 bee.exploring()
             elif bee.state == "Dancing":
                 bee.dancing()
+                if bee.state == "Dancing":
+                    num_bees_dancing += 1
             elif bee.state == "Verifying":
                 bee.Verifying()
             elif bee.state == "Returning_From_Exploring":
                 bee.Returning_From_Exploring()
             elif bee.state == "Returning_From_Verifying":
                 bee.Returning_From_Verifying()
+                if bee.state == "Dancing":
+                    num_bees_dancing += 1
             elif bee.state == "Going_To_Verify":
                 bee.Going_To_Verify()
             else:
@@ -63,8 +69,8 @@ def main():
             # print(bee.bee_agent_info()[5])
             # print(bee.location)
         for loc in location.locations_being_danced_for:
-            if len(location.locations_being_danced_for[loc]) > 10:
-                print(f"there are ten bees dancing for {loc}")
+            if len(location.locations_being_danced_for[loc]) /num_bee_agents > 1:
+                print(f".5 of the bees are dancing for the site! Quorum reached on round {time_iterator}")
                 exit()
         print(bee_locations)
         print()
@@ -76,7 +82,6 @@ def main():
 
 main()
 
-## check for quorm every round
 ## send bees out to verify based on dancing instead of randomness
 ## have the positive feedback loop for the bees that really like their site
 ## set up the map drawing stuff

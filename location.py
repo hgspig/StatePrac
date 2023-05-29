@@ -1,7 +1,6 @@
 locations_worth = {} # a list of the locations with all the bees in the location
-locations_being_danced_for = {tuple([0,0]):['bee']} # a list of the locations with all the bees in the location
+locations_being_danced_for = {} # a list of the locations with all the bees in the location #tuple([0,0]):['bee']
 
-#[0,0]:[bee,bee,bee]
 def add_location(location, worth):
     locations_being_danced_for[tuple(location)] = [] 
     locations_worth[tuple(location)] = worth 
