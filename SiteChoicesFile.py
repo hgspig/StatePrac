@@ -24,12 +24,12 @@ class SiteChoices(object):
         # below is how I could make a site in the future
         # self.site_one = Site(random_site_goodness(),
         #                      random_prob_of_finding(), [-2, 3])
-        self.site_one = Site([-2, 3],.6,random_prob_of_finding())
-        self.site_two = Site([-4, 0],.3,random_prob_of_finding())
-        self.site_three = Site([1,0],.7,random_prob_of_finding())
-        self.site_four = Site([0, -2],.9, random_prob_of_finding())
-        self.site_five = Site([3, -1],.2, random_prob_of_finding())
-        self.site_six = Site([0, 4],.5,random_prob_of_finding())
+        self.site_one = Site([-2, 3],.6,.7)
+        self.site_two = Site([-4, 0],.3,.6)
+        self.site_three = Site([1,0],.7,.4)
+        self.site_four = Site([0, -2],.9, .7)
+        self.site_five = Site([3, -1],.2, .1)
+        self.site_six = Site([0, 4],.5,.3)
         # self.list_of_sites = [self.site_one, self.site_two, self.site_three]
         self.list_of_sites = [self.site_one, self.site_two,
                               self.site_three, self.site_four, self.site_five, self.site_six]
