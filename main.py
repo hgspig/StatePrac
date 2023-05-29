@@ -4,11 +4,11 @@ import beeState
 import location
 
 
-total_simulation_time = 60
+total_simulation_time = 5
 max_exploring_time = 5
 # site_options = SiteChoicesFile.site_choices
 bee_locations = []
-num_bee_agents = 1
+num_bee_agents = 10
 list_of_bees = []  # this is of type pointers to the bee object instances
 quorum_reached = False
 
@@ -30,7 +30,7 @@ def main():
         location.add_location([site.X_distance_from_center,site.Y_distance_from_center],site.site_goodness)
     print(location.locations_worth)
     SiteChoicesFile.print_site_chart(site_choices)
-    # Map.create_world(10, 10, [], site_choices.list_of_coordinates)
+    Map.create_world(10, 10, [], site_choices.list_of_coordinates)
 
     for bee_creator in range(0, num_bee_agents):
         bee = beeState.BeeAgent()
@@ -77,7 +77,7 @@ def main():
         print()
         print()
 
-        # Map.create_world(10, 10, bee_locations, site_choices.list_of_coordinates)
+        Map.create_world(10, 10, bee_locations, site_choices.list_of_coordinates)
 
 
 main()

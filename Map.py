@@ -27,6 +27,8 @@ def plot_location(x_dimension, y_dimension,list_of_xy):
         y = [i[1]]
         if i[2] == "B":
             plt.plot(x,y,marker=f"${i[2]}$",markersize=point_num,markeredgecolor="red",markerfacecolor="white",)
+            circle1 = plt.Circle((x, y), 0.8, color='r' ,fill=False)
+            plt.gca().add_patch(circle1)
             # lines.Line2D([0,i[0],10],[0,i[1],10],color="red",linestyle="dashed",linewidth=2)
         elif i[2] == "S":
             plt.plot(x,y,marker=f"${i[2]}$",markersize=point_num,markeredgecolor="green",markerfacecolor="white",)
